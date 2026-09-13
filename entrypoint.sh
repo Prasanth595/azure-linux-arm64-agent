@@ -46,21 +46,21 @@ cleanup() {
   if [[ -s /run/sshd.pid ]]; then
     kill -TERM "$(cat /run/sshd.pid)" 2>/dev/null || true
   fi
-  if [[ -x ./config.sh ]]; then
-    ./config.sh remove --unattended --auth pat --token "${AZP_TOKEN}" >/dev/null 2>&1 || true
-  fi
+  su --shell /bin/bash --command \
+    'cd "$AZP_AGENT_DIR" && ./config.sh remove --unattended --auth pat --token "$AZP_TOKEN"' \
+    azp >/dev/null 2>&1 || true
 }
 trap cleanup EXIT INT TERM
 
-./config.sh \
-  --unattended \
-  --url "${AZP_URL}" \
-  --auth pat \
-  --token "${AZP_TOKEN}" \
-  --pool "${AZP_POOL}" \
-  --agent "${AZP_AGENT_NAME}" \
-  --work "${AZP_WORK}" \
-  --replace \
-  --acceptTeeEula
-
-exec su --shell /bin/bash --command './run.sh' azp
+su --shell /bin/bash --command \
+  'cd "$AZP_AGENT_DIR" && ./config.sh \
+    --unattended \
+    --url "$AZP_URL" \
+    --auth pat \
+    --token "$AZP_TOKEN" \
+    --pool "$AZP_POOL" \
+    --agent "$AZP_AGENT_NAME" \
+    --work "$AZP_WORK" \
+    --replace \
+    --acceptTeeEula && exec ./run.sh' \
+  azp
