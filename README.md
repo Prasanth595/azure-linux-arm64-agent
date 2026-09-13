@@ -4,6 +4,7 @@ This repository builds an Ubuntu 22.04 container for an Azure DevOps self-hosted
 agent. The image includes the Azure Pipelines agent runtime and common build
 dependencies; the agent is downloaded and registered when the container starts.
 The image runs as the unprivileged `azp` user and supports `linux/arm64`.
+It also starts OpenSSH on port 22 with the `nivin` user, who has sudo access.
 
 ## Build
 
@@ -26,9 +27,12 @@ Dockerfile, a compose file committed to source control, or an image layer.
 ```sh
 export AZP_URL="https://dev.azure.com/your-organization"
 export AZP_TOKEN="your-pat"
+export NIVIN_PASSWORD="set-this-at-runtime"
 docker run --rm --name azure-agent \
+  -p 2222:22 \
   -e AZP_URL \
   -e AZP_TOKEN \
+  -e NIVIN_PASSWORD \
   -e AZP_POOL=Default \
   -e AZP_AGENT_NAME="$(hostname)-arm64" \
   azure-linux-arm64-agent:local
@@ -38,6 +42,11 @@ docker run --rm --name azure-agent \
 container hostname. The entrypoint removes the agent registration when the
 container stops. Use a persistent volume at `/azp/_work` if retaining task
 working data between container replacements is required.
+
+Connect to SSH with `ssh -p 2222 nivin@localhost`. The `nivin` account is
+created with normal sudo authentication. `NIVIN_PASSWORD` is required at
+startup and is never stored in the image; provide it through a secret manager
+or your container runtime rather than committing it to source control.
 
 ## Azure DevOps token permissions
 

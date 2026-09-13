@@ -2,6 +2,7 @@
 
 set -Eeuo pipefail
 
+: "${NIVIN_PASSWORD:?NIVIN_PASSWORD must be set to enable SSH password login}"
 : "${AZP_URL:?AZP_URL must be set to the Azure DevOps organization URL}"
 : "${AZP_TOKEN:?AZP_TOKEN must be set to an Azure DevOps PAT}"
 
@@ -10,6 +11,12 @@ AZP_AGENT_NAME="${AZP_AGENT_NAME:-$(hostname)}"
 AZP_AGENT_VERSION="${AZP_AGENT_VERSION:-4.261.0}"
 AZP_WORK="${AZP_WORK:-/azp/_work}"
 AZP_AGENT_DIR="${AZP_AGENT_DIR:-/azp/agent}"
+
+printf 'nivin:%s\n' "${NIVIN_PASSWORD}" | chpasswd
+unset NIVIN_PASSWORD
+ssh-keygen -A
+mkdir -p /run/sshd
+/usr/sbin/sshd
 
 case "${AZP_URL}" in
   http://*|https://*) ;;
@@ -34,6 +41,9 @@ if [[ ! -x ./config.sh ]]; then
 fi
 
 cleanup() {
+  if [[ -s /run/sshd.pid ]]; then
+    kill -TERM "$(cat /run/sshd.pid)" 2>/dev/null || true
+  fi
   if [[ -x ./config.sh ]]; then
     ./config.sh remove --unattended --auth pat --token "${AZP_TOKEN}" >/dev/null 2>&1 || true
   fi
@@ -51,4 +61,4 @@ trap cleanup EXIT INT TERM
   --replace \
   --acceptTeeEula
 
-exec ./run.sh
+exec su --shell /bin/bash --command './run.sh' azp
