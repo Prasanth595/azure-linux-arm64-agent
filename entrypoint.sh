@@ -24,6 +24,7 @@ case "${AZP_URL}" in
 esac
 
 mkdir -p "${AZP_AGENT_DIR}" "${AZP_WORK}"
+chown -R azp:azp "${AZP_AGENT_DIR}" "${AZP_WORK}"
 cd "${AZP_AGENT_DIR}"
 
 if [[ ! -x ./config.sh ]]; then
@@ -36,6 +37,7 @@ if [[ ! -x ./config.sh ]]; then
   curl --fail --location --retry 5 --retry-delay 2 --silent --show-error \
     --output "${tmp_archive}" "${url}"
   tar --extract --gzip --file "${tmp_archive}" --strip-components=0
+  chown -R azp:azp "${AZP_AGENT_DIR}"
   rm -f "${tmp_archive}"
   trap - EXIT
 fi
