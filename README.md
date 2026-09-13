@@ -70,6 +70,11 @@ GitHub and change **Danger Zone → Change package visibility** to **Public**:
 https://github.com/users/<repository-owner>/packages/container/azure-linux-arm64-agent/settings
 ```
 
+If a workflow reports `permission_denied: write_package`, use that same page's
+**Manage Actions access** section to add this repository and grant it **Write**
+access. The workflow already requests `packages: write`; this package-level
+grant is required when the package was created before the repository was linked.
+
 Once the package is public, no registry login is required for pulls:
 
 ```sh
