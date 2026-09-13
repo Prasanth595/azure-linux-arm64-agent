@@ -65,4 +65,15 @@ stored in the image. To pull the image:
 docker pull ghcr.io/<repository-owner>/azure-linux-arm64-agent:latest
 ```
 
-Because the package is public, no registry login is required for pulls.
+After the first publication, open the package's **Package settings** page on
+GitHub and change **Danger Zone → Change package visibility** to **Public**:
+
+```text
+https://github.com/users/<repository-owner>/packages/container/azure-linux-arm64-agent/settings
+```
+
+Once the package is public, no registry login is required for pulls:
+
+```sh
+docker pull ghcr.io/<repository-owner>/azure-linux-arm64-agent:latest
+```
