@@ -48,3 +48,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Make GHCR package public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_NAME: azure-linux-arm64-agent
+        run: gh api --method PATCH "user/packages/container/${PACKAGE_NAME}" -f visibility=public

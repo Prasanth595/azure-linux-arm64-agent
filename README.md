@@ -62,6 +62,7 @@ The workflow grants `packages: write` to `GITHUB_TOKEN`; no registry secret is
 stored in the image. To pull the image:
 
 ```sh
-echo "$CR_PAT" | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
 docker pull ghcr.io/<repository-owner>/azure-linux-arm64-agent:latest
 ```
+
+Because the package is public, no registry login is required for pulls.
