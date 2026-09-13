@@ -3,8 +3,7 @@
 This repository builds an Ubuntu 22.04 container for an Azure DevOps self-hosted
 agent. The image includes the Azure Pipelines agent runtime and common build
 dependencies; the agent is downloaded and registered when the container starts.
-The image runs as the unprivileged `azp` user and supports `linux/arm64` (and,
-when built with the included workflow, `linux/amd64`).
+The image runs as the unprivileged `azp` user and supports `linux/arm64`.
 
 ## Build
 
@@ -50,8 +49,7 @@ Treat the token like a password and provide it only at runtime.
 ## GitHub Container Registry
 
 Publishing happens automatically when a GitHub Release is published. The
-workflow uses Docker Buildx to publish both `linux/amd64` and `linux/arm64`
-to:
+workflow uses Docker Buildx to publish `linux/arm64` only to:
 
 ```text
 ghcr.io/<repository-owner>/azure-linux-arm64-agent:<release-tag>
